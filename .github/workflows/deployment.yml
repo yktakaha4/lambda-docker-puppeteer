@@ -1,0 +1,52 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - deploy.*
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    timeout-minutes: 300
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      # Cloudformation
+      - uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: lambda-docker-puppeteer-infra
+          template: ./infra.yaml
+          no-fail-on-empty-changeset: "1"
+
+      # ECR
+      - uses: aws-actions/amazon-ecr-login@v1
+        id: login-ecr
+
+      - run: |
+          docker build -t $REGISTRY/$REPOSITORY:$TAG .
+          docker push $REGISTRY/$REPOSITORY:$TAG
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: lambda-docker-puppeteer-repos
+          TAG: latest
+
+      # Serverless Framework
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      - run: npm ci
+
+      - run: npm run deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
