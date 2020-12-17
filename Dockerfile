@@ -11,6 +11,9 @@ RUN npm run build
 ##### ##### ##### #####
 FROM public.ecr.aws/lambda/nodejs:12 AS runner
 
+RUN yum update -y \
+  && yum install -y atk
+
 COPY --from=builder \
   /opt/build/package*.json \
   ./
