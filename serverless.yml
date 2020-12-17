@@ -1,16 +1,15 @@
-service:
-  name: lambda-docker-puppeteer
+service: lambda-docker-puppeteer
 
 provider:
   name: aws
   stage: prod
   region: ${env:AWS_DEFAULT_REGION}
-  deploymentBucket: ${self:service.name}-sls
+  deploymentBucket: ${self:service}-sls
   timeout: 60
   memorySize: 2048
   environment:
     S3_REGION: ${self:provider.region}
-    S3_BUCKET_NAME: ${self:service.name}-out
+    S3_BUCKET_NAME: ${self:service}-out
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -21,7 +20,7 @@ provider:
 
 functions:
   index:
-    image: "#{AWS::AccountId}.dkr.ecr.#{AWS::Region}.amazonaws.com/${self:service.name}-repos@latest"
+    image: "#{AWS::AccountId}.dkr.ecr.#{AWS::Region}.amazonaws.com/${self:service}-repos:latest"
 
 plugins:
   - serverless-pseudo-parameters
