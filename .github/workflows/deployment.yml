@@ -39,7 +39,7 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$TAG .
           docker push $REGISTRY/$REPOSITORY:$TAG
 
-          echo "IMAGE_DIGEST=$(docker images --digests --format '{{json .Digest}}' $REGISTRY/$REPOSITORY:$TAG)" >> $GITHUB_ENV
+          echo "IMAGE_DIGEST=$(aws ecr describe-images --registry-id $REGISTRY --repository-name $REPOSITORY --image-ids imageTag=$TAG --output json --query 'imageDetails[0].imageDigest')" >> $GITHUB_ENV
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: lambda-docker-puppeteer-repos
