@@ -28,7 +28,7 @@ jobs:
       - uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: lambda-docker-puppeteer-infra
-          template: infra.yaml
+          template: infra.yml
           no-fail-on-empty-changeset: "1"
 
       # ECR
