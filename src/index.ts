@@ -24,7 +24,9 @@ const printPdf = async (url: string): Promise<Response> => {
   let browser: Browser | null = null;
   try {
     // Puppeteer立ち上げ
-    browser = await launch();
+    browser = await launch({
+      executablePath: '/usr/bin/google-chrome-stable',
+    });
 
     // ページ開く
     const page = await browser.newPage();
