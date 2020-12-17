@@ -21,4 +21,4 @@ COPY --from=builder \
 
 RUN npm ci --only=production
 
-CMD ["dist/main.handler"]
+CMD ["dist/index.handler"]
