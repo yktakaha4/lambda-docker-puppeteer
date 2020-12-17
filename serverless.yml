@@ -20,7 +20,7 @@ provider:
 
 functions:
   index:
-    image: "#{AWS::AccountId}.dkr.ecr.#{AWS::Region}.amazonaws.com/${self:service}-repos:latest"
+    image: "#{AWS::AccountId}.dkr.ecr.#{AWS::Region}.amazonaws.com/${self:service}-repos@${env:IMAGE_DIGEST}"
 
 plugins:
   - serverless-pseudo-parameters

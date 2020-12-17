@@ -38,6 +38,8 @@ jobs:
       - run: |
           docker build -t $REGISTRY/$REPOSITORY:$TAG .
           docker push $REGISTRY/$REPOSITORY:$TAG
+
+          echo "IMAGE_DIGEST=$(docker images --digests --format '{{json .Digest}}' $REGISTRY/$REPOSITORY:$TAG)" >> $GITHUB_ENV
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: lambda-docker-puppeteer-repos
@@ -51,3 +53,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          IMAGE_DIGEST: ${{ env.IMAGE_DIGEST }}
